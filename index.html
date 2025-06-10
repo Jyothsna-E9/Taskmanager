@@ -213,13 +213,21 @@
       }
 
       list.innerHTML = "";
+      const today = new Date();
+      today.setHours(0,0,0,0);
       for (const task of filtered) {
         const li = document.createElement("li");
-        li.className = `task ${task.completed ? "completed" : ""} priority-${task.priority}`;
+        let overdue = false;
+        if (task.due && !task.completed) {
+          const dueDate = new Date(task.due);
+          dueDate.setHours(0,0,0,0);
+          overdue = dueDate < today;
+        }
+        li.className = `task ${task.completed ? "completed" : ""} priority-${task.priority}${overdue ? " overdue" : ""}`;
         li.innerHTML = `
           <div>
             <strong>${task.title}</strong><br />
-            <small>${task.type} | Due: ${task.due || "No date"}</small>
+            <small>${task.type} | Due: ${task.due || "No date"}${overdue ? ' <span style=\"color:#e53935;font-weight:bold;\">(Overdue)</span>' : ''}</small>
           </div>
           <div>
             <button onclick="toggleComplete(${task.id})">${task.completed ? "Undo" : "Done"}</button>
