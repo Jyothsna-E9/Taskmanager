@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Task Manager</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 2rem;
+      background: #f4f4f4;
+    }
+    h1 {
+      text-align: center;
+    }
+    .task-form, .filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 20px;
+      justify-content: center;
+    }
+    .task-form input, .task-form select, .filters select {
+      padding: 0.5rem;
+      font-size: 1rem;
+    }
+    .task-list {
+      list-style: none;
+      padding: 0;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .task {
+      background: white;
+      margin: 10px 0;
+      padding: 1rem;
+      border-left: 5px solid #999;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .task.completed {
+      opacity: 0.6;
+      text-decoration: line-through;
+    }
+    .priority-urgent { border-color: red; }
+    .priority-high { border-color: orange; }
+    .priority-med { border-color: gold; }
+    .priority-low { border-color: green; }
+    button {
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h1>Task Manager</h1>
+  <div class="task-form">
+    <input type="text" id="title" placeholder="Task title" required />
+    <input type="date" id="due" />
+    <select id="type">
+      <option value="home">Home</option>
+      <option value="school">School</option>
+      <option value="work">Work</option>
+      <option value="project1">Project1</option>
+      <option value="project2">Project2</option>
+    </select>
+    <select id="priority">
+      <option value="urgent">Urgent</option>
+      <option value="high">High</option>
+      <option value="med">Medium</option>
+      <option value="low">Low</option>
+    </select>
+    <button onclick="addTask()">Add Task</button>
+  </div>
+
+  <div class="filters">
+    <select id="filter" onchange="renderTasks()">
+      <option value="all">Show All</option>
+      <option value="completed">Completed</option>
+      <option value="pending">Pending</option>
+    </select>
+    <select id="sort" onchange="renderTasks()">
+      <option value="duedate">Sort by Due Date</option>
+      <option value="priority">Sort by Priority</option>
+    </select>
+  </div>
+
+  <ul class="task-list" id="taskList"></ul>
+
+  <script>
+    let tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
+
+    function saveTasks() {
+      localStorage.setItem("tasks", JSON.stringify(tasks));
+    }
+
+    function addTask() {
+      const title = document.getElementById("title").value.trim();
+      const due = document.getElementById("due").value;
+      const type = document.getElementById("type").value;
+      const priority = document.getElementById("priority").value;
+
+      if (!title) return;
+
+      tasks.push({
+        id: Date.now(),
+        title,
+        due,
+        type,
+        priority,
+        completed: false
+      });
+
+      document.getElementById("title").value = "";
+      saveTasks();
+      renderTasks();
+    }
+
+    function toggleComplete(id) {
+      tasks = tasks.map(t => t.id === id ? { ...t, completed: !t.completed } : t);
+      saveTasks();
+      renderTasks();
+    }
+
+    function deleteTask(id) {
+      tasks = tasks.filter(t => t.id !== id);
+      saveTasks();
+      renderTasks();
+    }
+
+    function renderTasks() {
+      const list = document.getElementById("taskList");
+      const filter = document.getElementById("filter").value;
+      const sort = document.getElementById("sort").value;
+
+      let filtered = tasks;
+      if (filter === "completed") filtered = tasks.filter(t => t.completed);
+      else if (filter === "pending") filtered = tasks.filter(t => !t.completed);
+
+      if (sort === "duedate") {
+        filtered.sort((a, b) => new Date(a.due || Infinity) - new Date(b.due || Infinity));
+      } else if (sort === "priority") {
+        const order = { urgent: 1, high: 2, med: 3, low: 4 };
+        filtered.sort((a, b) => order[a.priority] - order[b.priority]);
+      }
+
+      list.innerHTML = "";
+      for (const task of filtered) {
+        const li = document.createElement("li");
+        li.className = `task ${task.completed ? "completed" : ""} priority-${task.priority}`;
+        li.innerHTML = `
+          <div>
+            <strong>${task.title}</strong><br />
+            <small>${task.type} | Due: ${task.due || "No date"}</small>
+          </div>
+          <div>
+            <button onclick="toggleComplete(${task.id})">${task.completed ? "Undo" : "Done"}</button>
+            <button onclick="deleteTask(${task.id})">Delete</button>
+          </div>
+        `;
+        list.appendChild(li);
+      }
+    }
+
+    renderTasks();
+  </script>
+</body>
+</html>
