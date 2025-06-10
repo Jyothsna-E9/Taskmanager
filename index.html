@@ -6,23 +6,40 @@
   <title>Task Manager</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
+      font-family: 'Segoe UI', Arial, sans-serif;
       padding: 2rem;
-      background: #f4f4f4;
+      background: linear-gradient(135deg, #e0e7ff 0%, #f4f4f4 100%);
+      min-height: 100vh;
     }
     h1 {
       text-align: center;
+      color: #2d3a4b;
+      letter-spacing: 2px;
+      font-size: 2.5rem;
+      margin-bottom: 2rem;
     }
     .task-form, .filters {
       display: flex;
       flex-wrap: wrap;
-      gap: 10px;
-      margin-bottom: 20px;
+      gap: 12px;
+      margin-bottom: 24px;
       justify-content: center;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(44,62,80,0.08);
+      padding: 18px 24px;
     }
     .task-form input, .task-form select, .filters select {
-      padding: 0.5rem;
+      padding: 0.6rem 1rem;
       font-size: 1rem;
+      border: 1px solid #cfd8dc;
+      border-radius: 6px;
+      outline: none;
+      transition: border 0.2s;
+      background: #f8fafc;
+    }
+    .task-form input:focus, .task-form select:focus, .filters select:focus {
+      border-color: #7b61ff;
     }
     .task-list {
       list-style: none;
@@ -31,24 +48,59 @@
       margin: 0 auto;
     }
     .task {
-      background: white;
-      margin: 10px 0;
-      padding: 1rem;
-      border-left: 5px solid #999;
+      background: #fff;
+      margin: 12px 0;
+      padding: 1.2rem 1.5rem;
+      border-left: 6px solid #999;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      border-radius: 8px;
+      box-shadow: 0 1px 4px rgba(44,62,80,0.07);
+      transition: box-shadow 0.2s;
+    }
+    .task:hover {
+      box-shadow: 0 4px 16px rgba(44,62,80,0.13);
     }
     .task.completed {
       opacity: 0.6;
       text-decoration: line-through;
+      background: #f0f4f8;
     }
-    .priority-urgent { border-color: red; }
-    .priority-high { border-color: orange; }
-    .priority-med { border-color: gold; }
-    .priority-low { border-color: green; }
+    .priority-urgent { border-color: #e53935; }
+    .priority-high { border-color: #fb8c00; }
+    .priority-med { border-color: #ffd600; }
+    .priority-low { border-color: #43a047; }
     button {
       cursor: pointer;
+      background: linear-gradient(90deg, #7b61ff 0%, #5e35b1 100%);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 0.5rem 1.1rem;
+      font-size: 1rem;
+      margin-left: 6px;
+      transition: background 0.2s, box-shadow 0.2s;
+      box-shadow: 0 1px 3px rgba(44,62,80,0.07);
+    }
+    button:hover {
+      background: linear-gradient(90deg, #5e35b1 0%, #7b61ff 100%);
+      box-shadow: 0 2px 8px rgba(44,62,80,0.13);
+    }
+    @media (max-width: 600px) {
+      .task-form, .filters {
+        flex-direction: column;
+        gap: 8px;
+        padding: 12px 8px;
+      }
+      .task {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 1rem;
+      }
+      .task > div:last-child {
+        margin-top: 10px;
+      }
     }
   </style>
 </head>
