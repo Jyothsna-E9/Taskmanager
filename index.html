@@ -103,6 +103,22 @@
       background: linear-gradient(90deg, #5e35b1 0%, #7b61ff 100%);
       box-shadow: 0 2px 8px rgba(44,62,80,0.13);
     }
+    #popup {
+      display: none;
+      position: fixed;
+      top: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #7b61ff;
+      color: #fff;
+      padding: 1rem 2rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 12px rgba(44,62,80,0.18);
+      font-size: 1.2rem;
+      z-index: 1000;
+      transition: opacity 0.3s;
+      opacity: 0.95;
+    }
     @media (max-width: 600px) {
       .task-form, .filters {
         flex-direction: column;
@@ -155,11 +171,22 @@
 
   <ul class="task-list" id="taskList"></ul>
 
+  <div id="popup" style="display:none;position:fixed;top:30px;left:50%;transform:translateX(-50%);background:#7b61ff;color:#fff;padding:1rem 2rem;border-radius:8px;box-shadow:0 2px 12px rgba(44,62,80,0.18);font-size:1.2rem;z-index:1000;transition:opacity 0.3s;opacity:0.95;">New Task</div>
+
   <script>
     let tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
 
     function saveTasks() {
       localStorage.setItem("tasks", JSON.stringify(tasks));
+    }
+
+    function showPopup(message) {
+      const popup = document.getElementById("popup");
+      popup.textContent = message;
+      popup.style.display = "block";
+      setTimeout(() => {
+        popup.style.display = "none";
+      }, 1200);
     }
 
     function addTask() {
@@ -182,6 +209,7 @@
       document.getElementById("title").value = "";
       saveTasks();
       renderTasks();
+      showPopup('New Task');
     }
 
     function toggleComplete(id) {
